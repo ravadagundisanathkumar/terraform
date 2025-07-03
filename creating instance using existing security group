@@ -1,0 +1,21 @@
+data "aws_security_group" "previous-sg" {
+  id = "sg-02743a2383b035a0d" #existing security group id
+}
+
+resource "aws_key_pair" "ourfirst" {
+  key_name   = "id_rsa"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCotsGItbgRI46GumN0KPFbOhprZzgE9dI7OQFwYr+HGscMEnaPBUBjsV/qYLzEgR/VfG0gwTh1ysQaa2OsdXBOotWiyJYxtGaOv9syXx9n1hgRMAVrB1OfFigQfh0mX6UbSsbqKmTzfZNvO4g+JPM9lCCXsRxFxF9U2bQx5KESO5zBS1Vy6mKaOv9Tz1dl2is5a2kmP1NLDktZ/NGHpaU4JhFBFlOZFRaUa3YLfn6+d5W24UjjUHHkooo9vB9YBZmsEP1cACixx6m2+kyxoY/DqfUTm374Dh9N3K8iHyC0CntO3kmpFomhAyVSbLyh+qqxwtin1NVoIpaDPYXh/9OLi0p8CuKM67QhVfG9RWwR6sSHhqgVDVGhCPHq1bHs6jw06Fr5GuOtR0C4LNU8ptZokg1/dGKm3mIoz8VdD4ZbsfM0/6qrO5sW/i7AYBomVhtdD/fddFORsWNO7Q1UAn3zEgDV22lQy7ub7neGRzeb1WvQaNrj5fHmu3OAw4PGojE="
+}
+
+#security group end here
+
+resource "aws_instance" "instance" {
+  ami                    = "ami-05ffe3c48a9991133"
+  availability_zone      = "us-east-1a"
+  instance_type          = "t2.micro"
+  vpc_security_group_ids = [data.aws_security_group.previous-sg.id]
+  /* the key zoomkey must be downloaded in your machine from where
+  you are executing this code. So first create the key, download it
+  and then use it */
+  key_name = "id_rsa"
+}
