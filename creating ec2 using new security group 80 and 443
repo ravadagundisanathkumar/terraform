@@ -1,0 +1,57 @@
+sudo su -
+hostnamectl set-hostname terra-form.example.com
+bash
+sudo yum install -y yum-utils shadow-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install terraform
+aws configure
+mkdir
+mkdir project
+cd project
+vim terra.tf
+#######################
+provider "aws" {
+  region = "us-east-1"
+}
+#security group
+resource "aws_security_group" "web_access" {
+  name        = "web_access"
+  description = "allow ssh and 443"
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+#security group end here
+resource "aws_instance" "web-server" {
+  ami               = "ami-05ffe3c48a9991133"
+  availability_zone = "us-east-1a"
+  instance_type     = "t2.micro"
+  key_name          = "NEW"
+  security_groups   = ["${aws_security_group.web_access.name}"]
+  tags = {
+    Name = "ec2-sg"
+  }
+
+}
+##################################
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+terraform apply
+terraform destroy
