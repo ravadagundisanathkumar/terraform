@@ -72,3 +72,12 @@ resource "aws_instance" "ourfirst" {
   }
 
 }
+
+lsblk
+mkfs.ext4 /dev/xvdb
+df  -h
+mkdir /data
+mount /dev/xvdb /data/
+df -h
+cd /data
+touch index.txt{1..20}
